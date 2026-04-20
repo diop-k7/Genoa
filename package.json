@@ -1,0 +1,23 @@
+{
+  "name": "genoa",
+  "version": "1.0.0",
+  "description": "Application de gestion d'arbre généalogique intelligent",
+  "scripts": {
+    "backend": "cd backend && npm start",
+    "frontend": "cd frontend && npm start",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diop-k7/Genoa.git"
+  },
+  "keywords": [
+    "genealogy",
+    "family-tree",
+    "react-native",
+    "expo",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC"
+}

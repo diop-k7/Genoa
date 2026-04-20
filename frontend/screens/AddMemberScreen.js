@@ -9,6 +9,7 @@ import {
   Alert,
   ActivityIndicator,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import api from '../services/api';
@@ -29,7 +30,8 @@ export default function AddMemberScreen({ navigation }) {
 
   const handleSubmit = async () => {
     if (!firstName || !lastName) {
-      Alert.alert('Erreur', 'Le prénom et le nom sont obligatoires');
+      if (Platform.OS === 'web') alert('Le prénom et le nom sont obligatoires');
+      else Alert.alert('Erreur', 'Le prénom et le nom sont obligatoires');
       return;
     }
 
@@ -50,18 +52,31 @@ export default function AddMemberScreen({ navigation }) {
       };
 
       await api.post('/members', memberData);
-      Alert.alert('Succès', 'Membre ajouté avec succès');
-      navigation.goBack();
+      
+      if (Platform.OS === 'web') {
+        alert('Membre ajouté avec succès');
+        navigation.goBack();
+      } else {
+        Alert.alert('Succès', 'Membre ajouté avec succès', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      }
     } catch (error) {
       console.error('Erreur ajout membre:', error);
-      Alert.alert('Erreur', error.response?.data?.error || 'Erreur lors de l\'ajout');
+      const msg = error.response?.data?.error || "Erreur lors de l'ajout";
+      if (Platform.OS === 'web') alert(msg);
+      else Alert.alert('Erreur', msg);
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <ScrollView style={styles.container}>
+  const content = (
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.scrollContent}
+      showsVerticalScrollIndicator={true}
+    >
       <View style={styles.form}>
         <Text style={styles.sectionTitle}>Informations obligatoires</Text>
 
@@ -162,7 +177,7 @@ export default function AddMemberScreen({ navigation }) {
           style={[styles.input, styles.textArea]}
           value={privateInfo}
           onChangeText={setPrivateInfo}
-          placeholder="Informations visibles uniquement par les administrateurs"
+          placeholder="Informations privées"
           multiline
           numberOfLines={4}
         />
@@ -181,12 +196,37 @@ export default function AddMemberScreen({ navigation }) {
       </View>
     </ScrollView>
   );
+
+  // 3. RENDU FINAL
+  if (Platform.OS === 'web') {
+    return <View style={styles.container}>{content}</View>;
+  }
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="padding"
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
+      {content}
+    </KeyboardAvoidingView>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: Platform.OS === 'web' ? undefined : 1, 
     backgroundColor: '#f5f5f5',
+    height: Platform.OS === 'web' ? '100vh' : '100%',
+    overflowY: Platform.OS === 'web' ? 'scroll' : 'visible', 
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  scrollContent: {
+    flexGrow: 1, 
+    paddingBottom: 100, 
   },
   form: {
     padding: 20,
@@ -216,6 +256,7 @@ const styles = StyleSheet.create({
   textArea: {
     height: 100,
     textAlignVertical: 'top',
+    paddingTop: 12,
   },
   pickerContainer: {
     backgroundColor: '#fff',
@@ -223,9 +264,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ddd',
+    overflow: 'hidden',
   },
   picker: {
     height: 50,
+    width: '100%',
   },
   submitButton: {
     backgroundColor: '#4CAF50',

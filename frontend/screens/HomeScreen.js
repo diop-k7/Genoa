@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ScrollView
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -46,7 +47,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <Text style={styles.welcomeText}>
         Bienvenue {user?.email}
       </Text>
@@ -90,16 +91,21 @@ export default function HomeScreen({ navigation }) {
       >
         <Text style={styles.menuButtonText}>🚪 Déconnexion</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#f5f5f5',
+  },
+  scrollContent: {
+    padding: 20,
+    paddingTop: 60, 
+    paddingBottom: 40,
     justifyContent: 'center',
+    minHeight: '100%', 
   },
   welcomeText: {
     fontSize: 24,

@@ -8,6 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   RefreshControl,
+  ScrollView
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
@@ -82,7 +83,7 @@ export default function MembersScreen({ navigation }) {
       style={styles.memberCard}
       onPress={() => navigation.navigate('EditMember', { member: item })}
     >
-      <View style={styles.memberInfo}>
+      <ScrollView style={styles.memberInfo} contentContainerStyle={styles.scrollContent}>
         <Text style={styles.memberName}>
           {item.firstName} {item.lastName}
         </Text>
@@ -96,7 +97,7 @@ export default function MembersScreen({ navigation }) {
             💼 {item.professions[0]}
           </Text>
         )}
-      </View>
+      </ScrollView>
 
       {(userRole === 'admin' || userRole === 'editor') && (
         <TouchableOpacity
@@ -122,7 +123,7 @@ export default function MembersScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <FlatList
         data={members}
         renderItem={renderMember}
@@ -149,7 +150,7 @@ export default function MembersScreen({ navigation }) {
           <Text style={styles.addButtonText}>+ Ajouter</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -157,6 +158,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  scrollContent: {
+    padding: 20,
+    paddingTop: 60, 
+    paddingBottom: 40,
+    justifyContent: 'center',
+    minHeight: '100%', 
   },
   centerContainer: {
     flex: 1,

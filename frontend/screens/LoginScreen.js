@@ -90,7 +90,7 @@ export default function LoginScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
           <Text style={styles.linkText}>Pas encore de compte ? S'inscrire</Text>
         </TouchableOpacity>
-      </View>
+   +   </View>
     </KeyboardAvoidingView>
   );
 }

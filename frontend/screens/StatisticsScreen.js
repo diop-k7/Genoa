@@ -48,7 +48,7 @@ export default function StatisticsScreen() {
   if (!stats) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>Erreur de chargement</Text>
+        <Text style={styles.errorText}>Pas de statistiques disponibles</Text>
       </View>
     );
   }

@@ -28,22 +28,22 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Déconnexion',
-      'Êtes-vous sûr de vouloir vous déconnecter ?',
-      [
+    const performLogout = async () => {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('user');
+      navigation.replace('Login');
+    };
+
+    if (Platform.OS === 'web') {
+      if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+        performLogout();
+      }
+    } else {
+      Alert.alert('Déconnexion', '...', [
         { text: 'Annuler', style: 'cancel' },
-        {
-          text: 'Déconnexion',
-          style: 'destructive',
-          onPress: async () => {
-            await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('user');
-            navigation.replace('Login');
-          },
-        },
-      ]
-    );
+        { text: 'Déconnexion', onPress: performLogout },
+      ]);
+    }
   };
 
   return (

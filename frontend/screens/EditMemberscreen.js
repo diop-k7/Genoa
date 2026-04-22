@@ -9,16 +9,17 @@ import {
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import api from '../services/api';
 
 export default function EditMemberScreen({ route, navigation }) {
-  const { member } = route.params;
+  const { member } = route?.params || { member: {} }; 
 
-  const [firstName, setFirstName] = useState(member.firstName);
-  const [lastName, setLastName] = useState(member.lastName);
-  const [sex, setSex] = useState(member.sex);
+  const [firstName, setFirstName] = useState(member?.firstName || '');
+  const [lastName, setLastName] = useState(member?.lastName || '');
+  const [sex, setSex] = useState(member?.sex || 'M');
   const [birthDate, setBirthDate] = useState(
     member.birthDate ? member.birthDate.split('T')[0] : ''
   );
@@ -68,13 +69,7 @@ export default function EditMemberScreen({ route, navigation }) {
     }
   };
 
-  return (
-     <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      <ScrollView
+  const content = (<ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={true}
@@ -196,18 +191,37 @@ export default function EditMemberScreen({ route, navigation }) {
           )}
         </TouchableOpacity>
       </View>
-    </ScrollView>
-    </KeyboardAvoidingView>
-  );
+    </ScrollView>);
+
+  if (Platform.OS === 'web') {
+      return <View style={styles.container}>{content}</View>;
+    }
+  
+    return (
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+        {content}
+      </KeyboardAvoidingView>
+    );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
+      flex: Platform.OS === 'web' ? undefined : 1, 
+      backgroundColor: '#f5f5f5',
+      height: Platform.OS === 'web' ? '100vh' : '100%',
+      overflowY: Platform.OS === 'web' ? 'scroll' : 'visible', 
   },
-  form: {
-    padding: 20,
+  scrollView: {
+    flex: 1,
+    width: '100%',
+  },
+  scrollContent: {
+    flexGrow: 1, 
+    paddingBottom: 100, 
   },
   sectionTitle: {
     fontSize: 18,
